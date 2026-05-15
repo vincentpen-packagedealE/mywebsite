@@ -354,6 +354,38 @@
     .elbl{font-size:.7rem;letter-spacing:.12em;color:var(--fog);text-transform:uppercase;margin-bottom:6px}
     .eval{font-size:1.05rem;color:var(--silver);font-weight:400}
     .eval a:hover{color:var(--blue-s);transition:color .2s}
+    .cc-divider{border:none;border-top:1px solid var(--line);margin:32px 0}
+    .if-group{display:flex;flex-direction:column;gap:18px;margin-top:0}
+    .if-label{display:block;font-size:.7rem;letter-spacing:.12em;color:var(--fog);text-transform:uppercase;margin-bottom:8px}
+    .if-input,.if-textarea{
+      width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
+      border-radius:var(--r-sm);padding:12px 16px;
+      font-family:inherit;font-size:.92rem;color:var(--silver);
+      outline:none;transition:border-color .2s,box-shadow .2s;resize:none;
+    }
+    .if-input::placeholder,.if-textarea::placeholder{color:var(--fog)}
+    .if-input:focus,.if-textarea:focus{
+      border-color:rgba(245,166,35,.6);
+      box-shadow:0 0 0 3px rgba(245,166,35,.1);
+    }
+    .if-textarea{min-height:110px}
+    .if-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+    .if-submit{
+      width:100%;margin-top:4px;
+      background:var(--blue);color:#fff;border:none;
+      padding:13px 28px;border-radius:100px;
+      font-family:inherit;font-size:.88rem;font-weight:500;letter-spacing:.06em;cursor:pointer;
+      transition:background .2s,box-shadow .2s,transform .15s;
+    }
+    .if-submit:hover{background:var(--blue-s);box-shadow:0 0 32px rgba(245,166,35,.35);transform:translateY(-2px)}
+    .if-submit:active{transform:translateY(0)}
+    .if-success{
+      display:none;text-align:center;padding:18px;
+      background:rgba(245,166,35,.08);border:1px solid rgba(245,166,35,.25);
+      border-radius:var(--r-sm);font-size:.9rem;color:var(--blue-s);
+    }
+    @media(max-width:560px){.if-row{grid-template-columns:1fr}}
+    @media(max-width:640px){.cc{padding:32px 24px}}
 
     /* BRANDS SECTION */
     #brands{background:var(--ink-3);position:relative;overflow:hidden}
@@ -677,6 +709,25 @@
           <div class="eval"><a href="mailto:ContactUs@PackageDealEnterprise.com">ContactUs@PackageDealEnterprise.com</a></div>
         </div>
       </div>
+      <hr class="cc-divider">
+      <form class="if-group" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" id="interestForm">
+        <div class="if-row">
+          <div>
+            <label class="if-label" for="if-name">Your Name</label>
+            <input class="if-input" id="if-name" type="text" name="name" placeholder="Jane Smith" required>
+          </div>
+          <div>
+            <label class="if-label" for="if-email">Your Email</label>
+            <input class="if-input" id="if-email" type="email" name="email" placeholder="you@company.com" required>
+          </div>
+        </div>
+        <div>
+          <label class="if-label" for="if-msg">How Can We Help?</label>
+          <textarea class="if-textarea" id="if-msg" name="message" placeholder="Tell us briefly what you're looking for or why you're reaching out…" required></textarea>
+        </div>
+        <button class="if-submit" type="submit">Send Message</button>
+        <div class="if-success" id="ifSuccess">Thanks — we'll be in touch shortly.</div>
+      </form>
     </div>
   </div>
 </section>
@@ -720,6 +771,25 @@ const io=new IntersectionObserver(es=>{
   es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}});
 },{threshold:.1,rootMargin:'0px 0px -50px 0px'});
 document.querySelectorAll('.sr').forEach(el=>io.observe(el));
+
+/* INTEREST FORM */
+const iForm=document.getElementById('interestForm');
+if(iForm){
+  iForm.addEventListener('submit',async function(e){
+    e.preventDefault();
+    const btn=iForm.querySelector('.if-submit');
+    btn.textContent='Sending…';btn.disabled=true;
+    const res=await fetch(iForm.action,{method:'POST',body:new FormData(iForm),headers:{Accept:'application/json'}});
+    if(res.ok){
+      iForm.reset();
+      document.getElementById('ifSuccess').style.display='block';
+      btn.style.display='none';
+    } else {
+      btn.textContent='Send Message';btn.disabled=false;
+      alert('Something went wrong. Please email us directly.');
+    }
+  });
+}
 
 </script>
 </body>
